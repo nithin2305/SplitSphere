@@ -14,8 +14,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/groups")
 @RequiredArgsConstructor
-//@CrossOrigin(origins = "http://localhost:4200")
-@CrossOrigin(origins = {"http://localhost:4200", "https://splitsphere.netlify.app"})
 public class GroupController {
     
     private final GroupService groupService;
