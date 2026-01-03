@@ -2,8 +2,6 @@ package com.splitsphere.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -34,7 +32,6 @@ public class User {
     private String userId;
     
     @NotBlank
-    @Pattern(regexp = "^\\d{4}$", message = "Code must be exactly 4 digits")
     @Column(nullable = false)
     private String code;
     
