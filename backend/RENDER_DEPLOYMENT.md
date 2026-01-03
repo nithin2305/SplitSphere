@@ -303,10 +303,11 @@ Click **"Add Environment Variable"** for each:
         ```
         postgresql://splitsphere_user:password@dpg-xxxxx-internal/splitsphere
         ```
-     3. Convert to JDBC format by adding `jdbc:` prefix:
+     3. Convert to JDBC format by adding `jdbc:` prefix and port:
         ```
         jdbc:postgresql://dpg-xxxxx-internal:5432/splitsphere
         ```
+        ⚠️ **Note**: Credentials are provided via separate SPRING_DATASOURCE_USERNAME and SPRING_DATASOURCE_PASSWORD variables
    - **Example**:
      ```
      jdbc:postgresql://dpg-abc123-internal:5432/splitsphere
@@ -1073,10 +1074,13 @@ Before going live:
 Quick copy-paste reference:
 
 ```bash
-# Required
+# Required - Database Connection
+# Note: Credentials are in separate variables, not embedded in URL
 SPRING_DATASOURCE_URL=jdbc:postgresql://dpg-xxx-internal:5432/splitsphere
 SPRING_DATASOURCE_USERNAME=splitsphere_user
 SPRING_DATASOURCE_PASSWORD=[from-database-dashboard]
+
+# Required - Security
 JWT_SECRET=[generate-with: openssl rand -base64 32]
 
 # Production Settings
