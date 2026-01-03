@@ -12,7 +12,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/balances")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:4200")
+//@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = {"http://localhost:4200", "https://splitsphere.netlify.app"})
 public class BalanceController {
     
     private final BalanceService balanceService;
