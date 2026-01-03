@@ -159,8 +159,6 @@ This method gives you more control over each component and helps you understand 
 
 #### Part A: Create PostgreSQL Database
 
-#### Part A: Create PostgreSQL Database
-
 **Step 1: Navigate to New Database**
 
 1. In Render Dashboard, click **"New +"** button
@@ -232,8 +230,6 @@ Once the database is created, you'll see the connection details:
 ---
 
 #### Part B: Deploy Backend Web Service
-
-**Step 1: Create Web Service**
 
 **Step 1: Create Web Service**
 
@@ -413,8 +409,6 @@ Click **"Add Environment Variable"** for each:
 
 **Step 8: Get and Test Backend URL**
 
-**Step 8: Get and Test Backend URL**
-
 1. **Copy your backend URL**:
    - Shown at top of service dashboard
    - Format: `https://splitsphere-backend.onrender.com`
@@ -451,10 +445,6 @@ Click **"Add Environment Variable"** for each:
 ## Environment Variables Setup
 
 ### Complete Reference Table
-
-### Complete Reference Table
-
-#### Required Variables (Must Set)
 
 #### Required Variables (Must Set)
 
@@ -526,8 +516,6 @@ Use this checklist when setting up your Render deployment:
 
 ## Post-Deployment Configuration
 
-## Post-Deployment Configuration
-
 ### Task 1: Test Your Backend API
 
 **Step 1: Verify Backend is Running**
@@ -571,8 +559,6 @@ Use this checklist when setting up your Render deployment:
    - Connect using provided credentials
    - Run: `SELECT * FROM users;`
    - Should see your test user
-
-### Task 2: Update Frontend Configuration
 
 ### Task 2: Update Frontend Configuration
 
@@ -626,8 +612,6 @@ Ensure `angular.json` uses production environment:
 
 ### Task 3: Deploy Frontend to Netlify
 
-### Task 3: Deploy Frontend to Netlify
-
 **Step 1: Sign Up/Login to Netlify**
 
 1. Go to https://app.netlify.com
@@ -671,8 +655,6 @@ Netlify should auto-detect `netlify.toml` in root directory, but verify:
 2. Click **"Options"** → **"Edit site name"**
 3. Change to: `splitsphere.netlify.app` (if available)
 4. Or add custom domain
-
-### Task 4: Update Backend CORS Configuration
 
 ### Task 4: Update Backend CORS Configuration
 
@@ -781,12 +763,6 @@ If something doesn't work, check:
 
 ## Troubleshooting
 
-## Troubleshooting
-
-### Issue 1: Backend Won't Start
-
-## Troubleshooting
-
 ### Issue 1: Backend Won't Start
 
 **Symptoms**: Service shows "Failed" or keeps restarting
@@ -845,8 +821,6 @@ Error: Web server failed to start. Port 8080 was already in use
   ```bash
   java -Dserver.port=$PORT -jar target/splitsphere-backend-1.0.0.jar
   ```
-
-### Issue 2: Database Connection Fails
 
 ### Issue 2: Database Connection Fails
 
@@ -993,8 +967,6 @@ from origin 'https://your-app.netlify.app' has been blocked by CORS policy
    - Warn users about first-load delay
    - Add loading indicator
    - Good for testing/demo purposes
-
-### Issue 6: Database Connection Timeout
 
 ### Issue 6: Database Connection Timeout
 
