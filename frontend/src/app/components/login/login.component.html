@@ -1,0 +1,44 @@
+<div class="login-container">
+  <div class="login-card">
+    <h2>Login to SplitSphere</h2>
+    
+    <form (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="userId">User ID</label>
+        <input
+          type="text"
+          id="userId"
+          name="userId"
+          [(ngModel)]="userId"
+          placeholder="Enter your user ID"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="code">4-Digit Code</label>
+        <input
+          type="password"
+          id="code"
+          name="code"
+          [(ngModel)]="code"
+          placeholder="Enter your 4-digit code"
+          maxlength="4"
+          pattern="\d{4}"
+          required
+        />
+      </div>
+
+      <div class="error-message" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </div>
+
+      <button type="submit" class="btn-primary">Login</button>
+    </form>
+
+    <div class="register-link">
+      Don't have an account? <a routerLink="/register">Register here</a>
+    </div>
+  </div>
+</div>
+
