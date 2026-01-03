@@ -21,12 +21,18 @@ export interface AuthResponse {
   accountName: string;
 }
 
+export interface Member {
+  userId: string;
+  accountName: string;
+}
+
 export interface Group {
   id: number;
   name: string;
   joinCode: string;
   creatorName: string;
   memberNames: string[];
+  members: Member[];
   createdAt: string;
 }
 

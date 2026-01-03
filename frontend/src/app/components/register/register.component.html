@@ -1,1 +1,70 @@
-<p>register works!</p>
+<div class="register-container">
+  <div class="register-card">
+    <h2>Register for SplitSphere</h2>
+    
+    <form (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="accountName">Account Name</label>
+        <input
+          type="text"
+          id="accountName"
+          name="accountName"
+          [(ngModel)]="accountName"
+          placeholder="Enter your full name"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="userId">User ID</label>
+        <input
+          type="text"
+          id="userId"
+          name="userId"
+          [(ngModel)]="userId"
+          placeholder="Choose a unique user ID"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="code">4-Digit Code</label>
+        <input
+          type="password"
+          id="code"
+          name="code"
+          [(ngModel)]="code"
+          placeholder="Create a 4-digit code"
+          maxlength="4"
+          pattern="\d{4}"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="confirmCode">Confirm Code</label>
+        <input
+          type="password"
+          id="confirmCode"
+          name="confirmCode"
+          [(ngModel)]="confirmCode"
+          placeholder="Re-enter your 4-digit code"
+          maxlength="4"
+          pattern="\d{4}"
+          required
+        />
+      </div>
+
+      <div class="error-message" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </div>
+
+      <button type="submit" class="btn-primary">Register</button>
+    </form>
+
+    <div class="login-link">
+      Already have an account? <a routerLink="/login">Login here</a>
+    </div>
+  </div>
+</div>
+

@@ -16,5 +16,6 @@ public class GroupResponse {
     private String joinCode;
     private String creatorName;
     private List<String> memberNames;
+    private List<MemberDTO> members;
     private LocalDateTime createdAt;
 }

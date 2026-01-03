@@ -1,1 +1,153 @@
-<p>dashboard works!</p>
+<div class="dashboard-container">
+  <header class="dashboard-header">
+    <h1>SplitSphere</h1>
+    <div class="user-info">
+      <span>Welcome, {{ currentUser }}</span>
+      <button (click)="logout()" class="btn-logout">Logout</button>
+    </div>
+  </header>
+
+  <div class="dashboard-content">
+    <!-- Sidebar with Groups -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h2>Your Groups</h2>
+        <div class="group-actions">
+          <button (click)="showCreateGroup = !showCreateGroup" class="btn-icon" title="Create Group">+</button>
+          <button (click)="showJoinGroup = !showJoinGroup" class="btn-icon" title="Join Group">⋈</button>
+        </div>
+      </div>
+
+      <!-- Create Group Form -->
+      <div class="form-modal" *ngIf="showCreateGroup">
+        <input
+          type="text"
+          [(ngModel)]="newGroupName"
+          placeholder="Group name"
+          (keyup.enter)="createGroup()"
+        />
+        <button (click)="createGroup()" class="btn-small">Create</button>
+        <button (click)="showCreateGroup = false" class="btn-small btn-cancel">Cancel</button>
+      </div>
+
+      <!-- Join Group Form -->
+      <div class="form-modal" *ngIf="showJoinGroup">
+        <input
+          type="text"
+          [(ngModel)]="joinCode"
+          placeholder="Enter join code"
+          (keyup.enter)="joinGroup()"
+        />
+        <button (click)="joinGroup()" class="btn-small">Join</button>
+        <button (click)="showJoinGroup = false" class="btn-small btn-cancel">Cancel</button>
+      </div>
+
+      <!-- Groups List -->
+      <div class="groups-list">
+        <div
+          *ngFor="let group of groups"
+          class="group-item"
+          [class.selected]="selectedGroup?.id === group.id"
+          (click)="selectGroup(group)"
+        >
+          <h3>{{ group.name }}</h3>
+          <p class="group-members">{{ group.memberNames.length }} members</p>
+        </div>
+        <p *ngIf="groups.length === 0" class="no-groups">No groups yet. Create or join one!</p>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <div *ngIf="!selectedGroup" class="welcome-message">
+        <h2>Welcome to SplitSphere!</h2>
+        <p>Select a group from the sidebar or create a new one to get started.</p>
+      </div>
+
+      <div *ngIf="selectedGroup" class="group-details">
+        <div class="group-header">
+          <div>
+            <h2>{{ selectedGroup.name }}</h2>
+            <p class="join-code">Join Code: <strong>{{ selectedGroup.joinCode }}</strong></p>
+          </div>
+          <button (click)="showCreateExpense = !showCreateExpense" class="btn-primary">
+            Add Expense
+          </button>
+        </div>
+
+        <!-- Messages -->
+        <div class="success-message" *ngIf="successMessage">{{ successMessage }}</div>
+        <div class="error-message" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+        <!-- Create Expense Form -->
+        <div class="expense-form" *ngIf="showCreateExpense">
+          <h3>Add New Expense</h3>
+          <div class="form-row">
+            <input
+              type="text"
+              [(ngModel)]="newExpenseDescription"
+              placeholder="Description (e.g., Dinner at restaurant)"
+            />
+            <input
+              type="number"
+              [(ngModel)]="newExpenseAmount"
+              placeholder="Amount"
+              step="0.01"
+              min="0.01"
+            />
+          </div>
+          <div class="participants-section">
+            <p>Split between:</p>
+            <div class="participants-list">
+              <label *ngFor="let member of selectedGroup.members" class="participant-checkbox">
+                <input
+                  type="checkbox"
+                  [(ngModel)]="selectedParticipants[member.userId]"
+                />
+                {{ member.accountName }}
+              </label>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button (click)="createExpense()" class="btn-primary">Create Expense</button>
+            <button (click)="showCreateExpense = false" class="btn-secondary">Cancel</button>
+          </div>
+        </div>
+
+        <!-- Balances Section -->
+        <div class="balances-section">
+          <h3>Your Balances</h3>
+          <div class="balances-list">
+            <div *ngFor="let balance of balances" class="balance-item" [class.owes]="balance.status === 'owes'" [class.owed]="balance.status === 'owed'">
+              <span class="balance-user">{{ balance.userName }}</span>
+              <span class="balance-amount">
+                {{ balance.status === 'owes' ? 'You owe' : 'Owes you' }}: ${{ balance.balance.toFixed(2) }}
+              </span>
+            </div>
+            <p *ngIf="balances.length === 0" class="no-balances">All settled up! 🎉</p>
+          </div>
+        </div>
+
+        <!-- Expenses List -->
+        <div class="expenses-section">
+          <h3>Recent Expenses</h3>
+          <div class="expenses-list">
+            <div *ngFor="let expense of expenses" class="expense-item">
+              <div class="expense-header">
+                <h4>{{ expense.description }}</h4>
+                <span class="expense-amount">${{ expense.amount.toFixed(2) }}</span>
+              </div>
+              <div class="expense-details">
+                <p>Paid by: <strong>{{ expense.payerName }}</strong></p>
+                <p>Split between: {{ expense.participantNames.join(', ') }}</p>
+                <p>Per person: ${{ expense.perPersonAmount.toFixed(2) }}</p>
+                <p class="expense-date">{{ expense.createdAt | date:'medium' }}</p>
+              </div>
+            </div>
+            <p *ngIf="expenses.length === 0" class="no-expenses">No expenses yet. Add one to get started!</p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>

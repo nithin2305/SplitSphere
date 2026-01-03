@@ -97,6 +97,9 @@ public class GroupService {
         response.setMemberNames(group.getMembers().stream()
                 .map(User::getAccountName)
                 .collect(Collectors.toList()));
+        response.setMembers(group.getMembers().stream()
+                .map(user -> new com.splitsphere.dto.MemberDTO(user.getUserId(), user.getAccountName()))
+                .collect(Collectors.toList()));
         response.setCreatedAt(group.getCreatedAt());
         return response;
     }
