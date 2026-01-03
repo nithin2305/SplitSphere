@@ -2,6 +2,21 @@
 
 This comprehensive guide provides step-by-step instructions for deploying the SplitSphere backend to Render.com with PostgreSQL database.
 
+> **⚠️ IMPORTANT - Common CORS Issue After Deployment**
+> 
+> If you see this error after deploying:
+> ```
+> Access to XMLHttpRequest at 'https://splitsphere.onrender.com/api/...' from origin 
+> 'https://your-app.netlify.app' has been blocked by CORS policy
+> ```
+> 
+> **Quick Fix**: Update `CORS_ALLOWED_ORIGINS` environment variable in Render:
+> 1. Go to Render Dashboard → Your backend service → Environment tab
+> 2. Update `CORS_ALLOWED_ORIGINS` to: `https://your-actual-netlify-url.netlify.app,http://localhost:4200`
+> 3. Save and wait for automatic redeploy (~2-3 minutes)
+> 
+> See [Task 4: Update Backend CORS Configuration](#task-4-update-backend-cors-configuration) for detailed steps.
+
 ## Table of Contents
 1. [Prerequisites](#prerequisites)
 2. [Deployment Options](#deployment-options)
