@@ -27,4 +27,8 @@ export class GroupService {
   getGroup(groupId: number): Observable<Group> {
     return this.http.get<Group>(`${this.apiUrl}/${groupId}`);
   }
+
+  closeGroup(groupId: number): Observable<Group> {
+    return this.http.put<Group>(`${this.apiUrl}/${groupId}/close`, {});
+  }
 }

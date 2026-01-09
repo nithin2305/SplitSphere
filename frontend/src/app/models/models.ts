@@ -33,6 +33,8 @@ export interface Group {
   creatorName: string;
   memberNames: string[];
   members: Member[];
+  closed?: boolean;
+  closedAt?: string;
   createdAt: string;
 }
 
@@ -63,4 +65,37 @@ export interface Balance {
   userName: string;
   balance: number;
   status: string;
+}
+
+export interface Settlement {
+  id?: number;
+  payerUserId: string;
+  payerName: string;
+  payeeUserId: string;
+  payeeName: string;
+  amount: number;
+  note?: string;
+  createdAt?: string;
+}
+
+export interface SettlementRequest {
+  groupId: number;
+  payeeUserId: string;
+  amount: number;
+  note?: string;
+}
+
+export interface Transaction {
+  id: number;
+  type: 'EXPENSE' | 'SETTLEMENT';
+  description: string;
+  amount: number;
+  payerUserId: string;
+  payerName: string;
+  payeeUserId?: string;
+  payeeName?: string;
+  participantNames?: string;
+  perPersonAmount?: number;
+  note?: string;
+  createdAt: string;
 }
