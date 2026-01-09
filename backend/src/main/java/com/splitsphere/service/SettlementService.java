@@ -31,7 +31,7 @@ public class SettlementService {
         Group group = groupRepository.findById(request.getGroupId())
                 .orElseThrow(() -> new IllegalArgumentException("Group not found"));
         
-        if (group.getClosed()) {
+        if (group.isClosed()) {
             throw new IllegalArgumentException("Cannot add settlement to a closed group");
         }
         

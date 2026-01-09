@@ -315,12 +315,13 @@ export class DashboardComponent implements OnInit {
       return;
     }
 
+    const groupName = this.selectedGroup.name;
     this.reportService.downloadExcelReport(this.selectedGroup.id).subscribe({
       next: (blob) => {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `${this.selectedGroup!.name}_report.xlsx`;
+        a.download = `${groupName}_report.xlsx`;
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
@@ -340,12 +341,13 @@ export class DashboardComponent implements OnInit {
       return;
     }
 
+    const groupName = this.selectedGroup.name;
     this.reportService.downloadPdfReport(this.selectedGroup.id).subscribe({
       next: (blob) => {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `${this.selectedGroup!.name}_report.pdf`;
+        a.download = `${groupName}_report.pdf`;
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);

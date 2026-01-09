@@ -54,7 +54,7 @@ public class Group {
     private Set<Settlement> settlements = new HashSet<>();
     
     @Column(nullable = false)
-    private Boolean closed = false;
+    private boolean closed = false;
     
     @Column
     private LocalDateTime closedAt;

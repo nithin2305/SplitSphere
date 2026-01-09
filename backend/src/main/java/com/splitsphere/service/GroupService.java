@@ -47,7 +47,7 @@ public class GroupService {
         Group group = groupRepository.findByJoinCode(joinCode)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid join code"));
         
-        if (group.getClosed()) {
+        if (group.isClosed()) {
             throw new IllegalArgumentException("Cannot join a closed group");
         }
         
@@ -89,7 +89,7 @@ public class GroupService {
             throw new IllegalArgumentException("Only the group creator can close the group");
         }
         
-        if (group.getClosed()) {
+        if (group.isClosed()) {
             throw new IllegalArgumentException("Group is already closed");
         }
         
@@ -128,7 +128,7 @@ public class GroupService {
         response.setMembers(group.getMembers().stream()
                 .map(user -> new com.splitsphere.dto.MemberDTO(user.getUserId(), user.getAccountName()))
                 .collect(Collectors.toList()));
-        response.setClosed(group.getClosed());
+        response.setClosed(group.isClosed());
         response.setClosedAt(group.getClosedAt());
         response.setCreatedAt(group.getCreatedAt());
         return response;
