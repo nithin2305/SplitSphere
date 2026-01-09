@@ -41,12 +41,14 @@ public class Expense {
     @JoinColumn(name = "group_id", nullable = false)
     private Group group;
     
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "expense_participants",
         joinColumns = @JoinColumn(name = "expense_id"),
         inverseJoinColumns = @JoinColumn(name = "user_id")
     )
+    @lombok.EqualsAndHashCode.Exclude
+    @lombok.ToString.Exclude
     private Set<User> participants = new HashSet<>();
     
     @Column(nullable = false, updatable = false)

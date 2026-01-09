@@ -33,15 +33,19 @@ public class Group {
     @JoinColumn(name = "creator_id", nullable = false)
     private User creator;
     
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "group_members",
         joinColumns = @JoinColumn(name = "group_id"),
         inverseJoinColumns = @JoinColumn(name = "user_id")
     )
+    @lombok.EqualsAndHashCode.Exclude
+    @lombok.ToString.Exclude
     private Set<User> members = new HashSet<>();
     
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
+    @lombok.EqualsAndHashCode.Exclude
+    @lombok.ToString.Exclude
     private Set<Expense> expenses = new HashSet<>();
     
     @Column(nullable = false, updatable = false)
