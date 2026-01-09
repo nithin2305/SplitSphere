@@ -39,6 +39,8 @@ public class User {
     private LocalDateTime createdAt;
     
     @ManyToMany(mappedBy = "members")
+    @lombok.EqualsAndHashCode.Exclude
+    @lombok.ToString.Exclude
     private Set<Group> groups = new HashSet<>();
     
     @PrePersist
