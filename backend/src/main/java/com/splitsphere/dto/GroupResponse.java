@@ -17,5 +17,7 @@ public class GroupResponse {
     private String creatorName;
     private List<String> memberNames;
     private List<MemberDTO> members;
+    private Boolean closed;
+    private LocalDateTime closedAt;
     private LocalDateTime createdAt;
 }

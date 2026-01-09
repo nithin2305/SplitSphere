@@ -34,6 +34,10 @@ public class ExpenseService {
         Group group = groupRepository.findById(request.getGroupId())
                 .orElseThrow(() -> new IllegalArgumentException("Group not found"));
         
+        if (group.getClosed()) {
+            throw new IllegalArgumentException("Cannot add expense to a closed group");
+        }
+        
         if (!group.getMembers().contains(payer)) {
             throw new IllegalArgumentException("User is not a member of this group");
         }

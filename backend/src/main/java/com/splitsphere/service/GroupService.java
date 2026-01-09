@@ -47,6 +47,10 @@ public class GroupService {
         Group group = groupRepository.findByJoinCode(joinCode)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid join code"));
         
+        if (group.getClosed()) {
+            throw new IllegalArgumentException("Cannot join a closed group");
+        }
+        
         if (group.getMembers().contains(user)) {
             throw new IllegalArgumentException("User is already a member of this group");
         }
@@ -71,6 +75,30 @@ public class GroupService {
     public GroupResponse getGroup(Long groupId) {
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new IllegalArgumentException("Group not found"));
+        return toGroupResponse(group);
+    }
+    
+    @Transactional
+    public GroupResponse closeGroup(Long groupId, String userId) {
+        User user = userService.getUserByUserId(userId);
+        
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new IllegalArgumentException("Group not found"));
+        
+        if (!group.getCreator().equals(user)) {
+            throw new IllegalArgumentException("Only the group creator can close the group");
+        }
+        
+        if (group.getClosed()) {
+            throw new IllegalArgumentException("Group is already closed");
+        }
+        
+        group.setClosed(true);
+        group.setClosedAt(java.time.LocalDateTime.now());
+        group = groupRepository.save(group);
+        
+        auditService.log("CLOSE", "Group", group.getId(), user, "Group closed: " + group.getName());
+        
         return toGroupResponse(group);
     }
     
@@ -100,6 +128,8 @@ public class GroupService {
         response.setMembers(group.getMembers().stream()
                 .map(user -> new com.splitsphere.dto.MemberDTO(user.getUserId(), user.getAccountName()))
                 .collect(Collectors.toList()));
+        response.setClosed(group.getClosed());
+        response.setClosedAt(group.getClosedAt());
         response.setCreatedAt(group.getCreatedAt());
         return response;
     }
