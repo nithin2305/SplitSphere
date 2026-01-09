@@ -146,11 +146,11 @@
           <div class="form-row">
             <select [(ngModel)]="settlementPayeeUserId" class="form-select">
               <option value="">Select who you're paying</option>
-              <option *ngFor="let balance of balances" 
-                      [value]="balance.userId"
-                      *ngIf="balance.status === 'owes'">
-                {{ balance.userName }} (You owe: ${{ balance.balance.toFixed(2) }})
-              </option>
+              <ng-container *ngFor="let balance of balances">
+                <option *ngIf="balance.status === 'owes'" [value]="balance.userId">
+                  {{ balance.userName }} (You owe: ${{ balance.balance.toFixed(2) }})
+                </option>
+              </ng-container>
             </select>
             <input
               type="number"

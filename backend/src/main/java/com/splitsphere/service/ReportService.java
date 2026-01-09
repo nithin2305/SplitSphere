@@ -5,7 +5,6 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
-import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.splitsphere.dto.TransactionResponse;
 import com.splitsphere.model.Group;
@@ -47,7 +46,7 @@ public class ReportService {
             
             // Title row
             Row titleRow = sheet.createRow(0);
-            Cell titleCell = titleRow.createCell(0);
+            org.apache.poi.ss.usermodel.Cell titleCell = titleRow.createCell(0);
             titleCell.setCellValue("Transaction Report: " + group.getName());
             titleCell.setCellStyle(headerStyle);
             
@@ -55,7 +54,7 @@ public class ReportService {
             Row headerRow = sheet.createRow(2);
             String[] columns = {"Date", "Type", "Description", "Amount", "Payer", "Details"};
             for (int i = 0; i < columns.length; i++) {
-                Cell cell = headerRow.createCell(i);
+                org.apache.poi.ss.usermodel.Cell cell = headerRow.createCell(i);
                 cell.setCellValue(columns[i]);
                 cell.setCellStyle(headerStyle);
             }
@@ -119,20 +118,20 @@ public class ReportService {
             table.setWidth(550);
             
             // Header
-            table.addHeaderCell(new Cell().add(new Paragraph("Date").setBold()));
-            table.addHeaderCell(new Cell().add(new Paragraph("Type").setBold()));
-            table.addHeaderCell(new Cell().add(new Paragraph("Description").setBold()));
-            table.addHeaderCell(new Cell().add(new Paragraph("Amount").setBold()));
-            table.addHeaderCell(new Cell().add(new Paragraph("Payer").setBold()));
-            table.addHeaderCell(new Cell().add(new Paragraph("Details").setBold()));
+            table.addHeaderCell(new com.itextpdf.layout.element.Cell().add(new Paragraph("Date").setBold()));
+            table.addHeaderCell(new com.itextpdf.layout.element.Cell().add(new Paragraph("Type").setBold()));
+            table.addHeaderCell(new com.itextpdf.layout.element.Cell().add(new Paragraph("Description").setBold()));
+            table.addHeaderCell(new com.itextpdf.layout.element.Cell().add(new Paragraph("Amount").setBold()));
+            table.addHeaderCell(new com.itextpdf.layout.element.Cell().add(new Paragraph("Payer").setBold()));
+            table.addHeaderCell(new com.itextpdf.layout.element.Cell().add(new Paragraph("Details").setBold()));
             
             // Data
             for (TransactionResponse transaction : transactions) {
-                table.addCell(new Cell().add(new Paragraph(transaction.getCreatedAt().format(DATE_FORMATTER))));
-                table.addCell(new Cell().add(new Paragraph(transaction.getType())));
-                table.addCell(new Cell().add(new Paragraph(transaction.getDescription())));
-                table.addCell(new Cell().add(new Paragraph("$" + transaction.getAmount())));
-                table.addCell(new Cell().add(new Paragraph(transaction.getPayerName())));
+                table.addCell(new com.itextpdf.layout.element.Cell().add(new Paragraph(transaction.getCreatedAt().format(DATE_FORMATTER))));
+                table.addCell(new com.itextpdf.layout.element.Cell().add(new Paragraph(transaction.getType())));
+                table.addCell(new com.itextpdf.layout.element.Cell().add(new Paragraph(transaction.getDescription())));
+                table.addCell(new com.itextpdf.layout.element.Cell().add(new Paragraph("$" + transaction.getAmount())));
+                table.addCell(new com.itextpdf.layout.element.Cell().add(new Paragraph(transaction.getPayerName())));
                 
                 String details = "";
                 if ("EXPENSE".equals(transaction.getType())) {
@@ -143,7 +142,7 @@ public class ReportService {
                         details += " - " + transaction.getNote();
                     }
                 }
-                table.addCell(new Cell().add(new Paragraph(details)));
+                table.addCell(new com.itextpdf.layout.element.Cell().add(new Paragraph(details)));
             }
             
             document.add(table);
