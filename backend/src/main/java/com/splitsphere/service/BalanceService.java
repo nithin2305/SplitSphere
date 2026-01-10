@@ -3,9 +3,11 @@ package com.splitsphere.service;
 import com.splitsphere.dto.BalanceResponse;
 import com.splitsphere.model.Expense;
 import com.splitsphere.model.Group;
+import com.splitsphere.model.Settlement;
 import com.splitsphere.model.User;
 import com.splitsphere.repository.ExpenseRepository;
 import com.splitsphere.repository.GroupRepository;
+import com.splitsphere.repository.SettlementRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +22,7 @@ public class BalanceService {
     
     private final ExpenseRepository expenseRepository;
     private final GroupRepository groupRepository;
+    private final SettlementRepository settlementRepository;
     private final UserService userService;
     
     @Transactional(readOnly = true)
@@ -34,10 +37,12 @@ public class BalanceService {
         }
         
         List<Expense> expenses = expenseRepository.findByGroup(group);
+        List<Settlement> settlements = settlementRepository.findByGroupOrderByCreatedAtDesc(group);
         
         // Calculate balances for each user relative to current user
         Map<User, BigDecimal> balances = new HashMap<>();
         
+        // Process expenses
         for (Expense expense : expenses) {
             User payer = expense.getPayer();
             Set<User> participants = expense.getParticipants();
@@ -63,6 +68,22 @@ public class BalanceService {
             }
         }
         
+        // Process settlements
+        for (Settlement settlement : settlements) {
+            User payer = settlement.getPayer();
+            User payee = settlement.getPayee();
+            BigDecimal amount = settlement.getAmount();
+            
+            // Settlement means payer paid payee, so payer's debt to payee is reduced
+            if (payer.equals(currentUser)) {
+                // Current user paid someone, so current user owes them less (add positive amount)
+                balances.merge(payee, amount, BigDecimal::add);
+            } else if (payee.equals(currentUser)) {
+                // Someone paid current user, so current user owes them less (subtract amount, making it less negative)
+                balances.merge(payer, amount.negate(), BigDecimal::add);
+            }
+        }
+        
         List<BalanceResponse> responses = new ArrayList<>();
         for (Map.Entry<User, BigDecimal> entry : balances.entrySet()) {
             User user = entry.getKey();
@@ -79,5 +100,63 @@ public class BalanceService {
         }
         
         return responses;
+    }
+    
+    /**
+     * Calculate how much payer owes to payee in a specific group.
+     * Positive value means payer owes payee.
+     * Negative value means payee owes payer.
+     */
+    @Transactional(readOnly = true)
+    public BigDecimal calculateBalanceBetweenUsers(Long groupId, User payer, User payee) {
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new IllegalArgumentException("Group not found"));
+        
+        List<Expense> expenses = expenseRepository.findByGroup(group);
+        List<Settlement> settlements = settlementRepository.findByGroupOrderByCreatedAtDesc(group);
+        
+        BigDecimal balance = BigDecimal.ZERO;
+        
+        // Process expenses
+        for (Expense expense : expenses) {
+            User expensePayer = expense.getPayer();
+            Set<User> participants = expense.getParticipants();
+            
+            if (participants.isEmpty()) {
+                continue;
+            }
+            
+            BigDecimal perPersonAmount = expense.getAmount()
+                    .divide(BigDecimal.valueOf(participants.size()), 2, RoundingMode.HALF_UP);
+            
+            // If payee paid and payer participated (not as payer), payer owes payee
+            if (expensePayer.equals(payee) && participants.contains(payer) && !expensePayer.equals(payer)) {
+                balance = balance.add(perPersonAmount);
+            }
+            
+            // If payer paid and payee participated (not as payer), payee owes payer (negative balance)
+            if (expensePayer.equals(payer) && participants.contains(payee) && !expensePayer.equals(payee)) {
+                balance = balance.subtract(perPersonAmount);
+            }
+        }
+        
+        // Process settlements
+        for (Settlement settlement : settlements) {
+            User settlementPayer = settlement.getPayer();
+            User settlementPayee = settlement.getPayee();
+            BigDecimal amount = settlement.getAmount();
+            
+            // If payer paid payee in settlement, payer's debt to payee is reduced
+            if (settlementPayer.equals(payer) && settlementPayee.equals(payee)) {
+                balance = balance.subtract(amount);
+            }
+            
+            // If payee paid payer in settlement, payer's debt to payee is increased
+            if (settlementPayer.equals(payee) && settlementPayee.equals(payer)) {
+                balance = balance.add(amount);
+            }
+        }
+        
+        return balance;
     }
 }
