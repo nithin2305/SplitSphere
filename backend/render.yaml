@@ -29,7 +29,7 @@ services:
       - key: JWT_SECRET
         generateValue: true
       - key: CORS_ALLOWED_ORIGINS
-        value: "*"
+        value: "https://splitsphere-nithin-26.web.app,https://splitsphere-nithin-26.firebaseapp.com,http://localhost:4200,*"
 
 databases:
   # PostgreSQL Database
