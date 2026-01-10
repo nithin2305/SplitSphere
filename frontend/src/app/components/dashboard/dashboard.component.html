@@ -48,9 +48,13 @@
           *ngFor="let group of groups"
           class="group-item"
           [class.selected]="selectedGroup?.id === group.id"
+          [class.closed-group]="group.closed"
           (click)="selectGroup(group)"
         >
-          <h3>{{ group.name }}</h3>
+          <h3>
+            {{ group.name }}
+            <span *ngIf="group.closed" class="closed-badge-small">CLOSED</span>
+          </h3>
           <p class="group-members">{{ group.memberNames.length }} members</p>
         </div>
         <p *ngIf="groups.length === 0" class="no-groups">No groups yet. Create or join one!</p>
@@ -67,12 +71,34 @@
       <div *ngIf="selectedGroup" class="group-details">
         <div class="group-header">
           <div>
-            <h2>{{ selectedGroup.name }}</h2>
+            <h2>
+              {{ selectedGroup.name }}
+              <span *ngIf="selectedGroup.closed" class="closed-badge">CLOSED</span>
+            </h2>
             <p class="join-code">Join Code: <strong>{{ selectedGroup.joinCode }}</strong></p>
           </div>
-          <button (click)="showCreateExpense = !showCreateExpense" class="btn-primary">
-            Add Expense
-          </button>
+          <div class="group-actions-bar">
+            <button *ngIf="!selectedGroup.closed" (click)="showCreateExpense = !showCreateExpense" class="btn-primary">
+              Add Expense
+            </button>
+            <button *ngIf="!selectedGroup.closed" (click)="showSettlement = !showSettlement" class="btn-secondary">
+              Settle Up
+            </button>
+            <button (click)="showTransactionHistory = !showTransactionHistory" class="btn-info">
+              Transaction History
+            </button>
+            <button (click)="downloadExcelReport()" class="btn-success" title="Download Excel">
+              📊 Excel
+            </button>
+            <button (click)="downloadPdfReport()" class="btn-success" title="Download PDF">
+              📄 PDF
+            </button>
+            <button *ngIf="!selectedGroup.closed && selectedGroup.creatorName === currentUser" 
+                    (click)="closeGroup()" 
+                    class="btn-danger">
+              Close Group
+            </button>
+          </div>
         </div>
 
         <!-- Messages -->
@@ -112,6 +138,75 @@
             <button (click)="createExpense()" class="btn-primary">Create Expense</button>
             <button (click)="showCreateExpense = false" class="btn-secondary">Cancel</button>
           </div>
+        </div>
+
+        <!-- Settlement Form -->
+        <div class="expense-form" *ngIf="showSettlement">
+          <h3>Record Settlement</h3>
+          <div class="form-row">
+            <select [(ngModel)]="settlementPayeeUserId" class="form-select">
+              <option value="">Select who you're paying</option>
+              <ng-container *ngFor="let balance of balances">
+                <option *ngIf="balance.status === 'owes'" [value]="balance.userId">
+                  {{ balance.userName }} (You owe: ${{ balance.balance.toFixed(2) }})
+                </option>
+              </ng-container>
+            </select>
+            <input
+              type="number"
+              [(ngModel)]="settlementAmount"
+              placeholder="Amount"
+              step="0.01"
+              min="0.01"
+            />
+          </div>
+          <div class="form-row">
+            <input
+              type="text"
+              [(ngModel)]="settlementNote"
+              placeholder="Note (optional)"
+            />
+          </div>
+          <div class="form-actions">
+            <button (click)="createSettlement()" class="btn-primary">Record Settlement</button>
+            <button (click)="showSettlement = false" class="btn-secondary">Cancel</button>
+          </div>
+        </div>
+
+        <!-- Transaction History -->
+        <div class="transaction-history" *ngIf="showTransactionHistory">
+          <h3>Transaction History</h3>
+          <div class="transactions-list">
+            <div *ngFor="let transaction of transactions" class="transaction-item" [class.settlement]="transaction.type === 'SETTLEMENT'">
+              <div class="transaction-header">
+                <h4>
+                  <span class="transaction-type-badge" [class.expense-badge]="transaction.type === 'EXPENSE'" [class.settlement-badge]="transaction.type === 'SETTLEMENT'">
+                    {{ transaction.type }}
+                  </span>
+                  {{ transaction.description }}
+                </h4>
+                <span class="transaction-amount">${{ transaction.amount.toFixed(2) }}</span>
+              </div>
+              <div class="transaction-details">
+                <p><strong>Payer:</strong> {{ transaction.payerName }}</p>
+                <p *ngIf="transaction.type === 'EXPENSE' && transaction.participantNames">
+                  <strong>Split between:</strong> {{ transaction.participantNames }}
+                </p>
+                <p *ngIf="transaction.type === 'EXPENSE' && transaction.perPersonAmount">
+                  <strong>Per person:</strong> ${{ transaction.perPersonAmount.toFixed(2) }}
+                </p>
+                <p *ngIf="transaction.type === 'SETTLEMENT'">
+                  <strong>Paid to:</strong> {{ transaction.payeeName }}
+                </p>
+                <p *ngIf="transaction.type === 'SETTLEMENT' && transaction.note">
+                  <strong>Note:</strong> {{ transaction.note }}
+                </p>
+                <p class="transaction-date">{{ transaction.createdAt | date:'medium' }}</p>
+              </div>
+            </div>
+            <p *ngIf="transactions.length === 0" class="no-transactions">No transactions yet.</p>
+          </div>
+          <button (click)="showTransactionHistory = false" class="btn-secondary">Close</button>
         </div>
 
         <!-- Balances Section -->

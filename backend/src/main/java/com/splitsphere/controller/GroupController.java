@@ -44,4 +44,12 @@ public class GroupController {
     public ResponseEntity<GroupResponse> getGroup(@PathVariable Long groupId) {
         return ResponseEntity.ok(groupService.getGroup(groupId));
     }
+    
+    @PutMapping("/{groupId}/close")
+    public ResponseEntity<GroupResponse> closeGroup(
+            @PathVariable Long groupId,
+            Authentication authentication) {
+        String userId = authentication.getName();
+        return ResponseEntity.ok(groupService.closeGroup(groupId, userId));
+    }
 }

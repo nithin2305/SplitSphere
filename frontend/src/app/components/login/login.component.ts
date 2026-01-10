@@ -15,6 +15,7 @@ export class LoginComponent {
   userId = '';
   code = '';
   errorMessage = '';
+  isLoading = false;
 
   constructor(
     private authService: AuthService,
@@ -23,6 +24,10 @@ export class LoginComponent {
 
   onSubmit(): void {
     this.errorMessage = '';
+    
+    if (this.isLoading) {
+      return; // Prevent multiple submissions
+    }
     
     if (!this.userId || !this.code) {
       this.errorMessage = 'Please fill in all fields';
@@ -34,11 +39,14 @@ export class LoginComponent {
       return;
     }
 
+    this.isLoading = true;
     this.authService.login({ userId: this.userId, code: this.code }).subscribe({
       next: () => {
+        this.isLoading = false;
         this.router.navigate(['/dashboard']);
       },
       error: (error) => {
+        this.isLoading = false;
         this.errorMessage = 'Invalid credentials';
         console.error('Login error:', error);
       }

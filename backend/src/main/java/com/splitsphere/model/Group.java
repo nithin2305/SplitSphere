@@ -48,6 +48,17 @@ public class Group {
     @lombok.ToString.Exclude
     private Set<Expense> expenses = new HashSet<>();
     
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
+    @lombok.EqualsAndHashCode.Exclude
+    @lombok.ToString.Exclude
+    private Set<Settlement> settlements = new HashSet<>();
+    
+    @Column(nullable = false)
+    private boolean closed = false;
+    
+    @Column
+    private LocalDateTime closedAt;
+    
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
     
