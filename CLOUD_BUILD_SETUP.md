@@ -10,6 +10,23 @@ This guide explains how to set up Cloud Build with Artifact Registry for the Spl
    - Artifact Registry API
    - Cloud Resource Manager API
 
+## Quick Validation
+
+Before following the setup steps, you can validate your environment using the provided script:
+
+```bash
+./validate-cloud-build-setup.sh
+```
+
+This script checks:
+- ✓ gcloud CLI installation and authentication
+- ✓ Project configuration
+- ✓ Required API enablement
+- ✓ Artifact Registry repository existence
+- ✓ Cloud Build service account permissions
+- ✓ Cloud Build triggers
+- ✓ cloudbuild.yaml validity
+
 ## Setup Steps
 
 ### 1. Enable Required APIs
