@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,6 +23,7 @@ public class SettlementService {
     private final GroupRepository groupRepository;
     private final UserService userService;
     private final AuditService auditService;
+    private final BalanceService balanceService;
     
     @Transactional
     public SettlementResponse createSettlement(SettlementRequest request, String payerUserId) {
@@ -45,6 +47,22 @@ public class SettlementService {
         
         if (payer.getId().equals(payee.getId())) {
             throw new IllegalArgumentException("Cannot settle payment with yourself");
+        }
+        
+        // Calculate how much payer owes to payee
+        BigDecimal currentBalance = balanceService.calculateBalanceBetweenUsers(
+                request.getGroupId(), payer, payee);
+        
+        // If balance is negative or zero, payer doesn't owe anything to payee
+        if (currentBalance.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("You don't owe anything to this user");
+        }
+        
+        // Check if settlement amount exceeds what is owed
+        if (request.getAmount().compareTo(currentBalance) > 0) {
+            throw new IllegalArgumentException(
+                    String.format("Settlement amount ($%.2f) exceeds what you owe ($%.2f)", 
+                            request.getAmount(), currentBalance));
         }
         
         Settlement settlement = new Settlement();
