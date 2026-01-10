@@ -76,11 +76,11 @@ public class BalanceService {
             
             // Settlement means payer paid payee, so payer's debt to payee is reduced
             if (payer.equals(currentUser)) {
-                // Current user paid someone, so that person owes current user less
-                balances.merge(payee, amount.negate(), BigDecimal::add);
+                // Current user paid someone, so current user owes them less (add positive amount)
+                balances.merge(payee, amount, BigDecimal::add);
             } else if (payee.equals(currentUser)) {
-                // Someone paid current user, so current user owes them less
-                balances.merge(payer, amount, BigDecimal::add);
+                // Someone paid current user, so current user owes them less (subtract amount, making it less negative)
+                balances.merge(payer, amount.negate(), BigDecimal::add);
             }
         }
         
