@@ -143,6 +143,18 @@ npm test
 ### Audit Logs
 - id, action, entityType, entityId, user, details, timestamp
 
+## Deployment
+
+### Cloud Build with Google Cloud Platform
+
+For deploying to Google Cloud Platform using Cloud Build and Artifact Registry, see the [Cloud Build Setup Guide](CLOUD_BUILD_SETUP.md).
+
+### Other Deployment Options
+
+For alternative deployment options (Render, Railway, Netlify), see:
+- [Deployment Guide](DEPLOYMENT_GUIDE.md) - Comprehensive deployment options
+- [Quick Deploy](QUICK_DEPLOY.md) - Quick deployment to Render.com
+
 ## License
 
 This project is open source and available under the MIT License.

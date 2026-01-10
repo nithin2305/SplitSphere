@@ -1,0 +1,53 @@
+# Cloud Build configuration for SplitSphere backend
+# This file configures the build process to create and push Docker images to Artifact Registry
+
+steps:
+  # Step 1: Build the Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-t'
+      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/splitsphere:${SHORT_SHA}'
+      - '-t'
+      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/splitsphere:latest'
+      - '-f'
+      - 'backend/Dockerfile'
+      - './backend'
+    id: 'build-image'
+
+  # Step 2: Push the Docker image with commit SHA tag
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/splitsphere:${SHORT_SHA}'
+    id: 'push-sha-tag'
+
+  # Step 3: Push the Docker image with latest tag
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/splitsphere:latest'
+    id: 'push-latest-tag'
+
+# Images to be pushed to Artifact Registry
+images:
+  - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/splitsphere:${SHORT_SHA}'
+  - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/splitsphere:latest'
+
+# Substitution variables with defaults
+# These can be overridden in the Cloud Build trigger settings
+substitutions:
+  _REGION: 'us-central1'
+  _REPOSITORY: 'splitsphere'
+
+# Build options
+options:
+  # Use a larger machine type for faster builds
+  machineType: 'N1_HIGHCPU_8'
+  # Enable disk size configuration
+  diskSizeGb: 100
+  # Logging options
+  logging: CLOUD_LOGGING_ONLY
+
+# Timeout for the entire build
+timeout: '1200s'
